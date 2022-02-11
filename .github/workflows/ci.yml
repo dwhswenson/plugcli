@@ -1,0 +1,62 @@
+name: "tests"
+
+on:
+  pull_request:
+    branches:
+      - main
+      - stable
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  schedule:
+    - cron: "0 6 * * *"
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  tests:
+    runs-on: ${{ matrix.OS }}-latest
+    name: "Unit tests"
+    strategy:
+      matrix:
+        CONDA_PY:
+          - "3.10"
+          - "3.9"
+          - "3.8"
+        OS:
+          - ubuntu
+          - windows
+          - macos
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          use-mamba: true
+          python-version: ${{ matrix.CONDA_PY }}
+          miniforge-variant: Mambaforge
+      - name: "Install"
+        run: |
+          python -m pip install -e .
+          python -c "import plugcli"
+      - name: "Install test requirements"
+        run: python -m pip install pytest pytest-cov autorelease
+      - name: "Versions"
+        run: conda list
+      - name: "Run tests"
+        run: 
+          pytest -v --cov=plugcli --cov-report=xml
+      - name: "CodeCov"
+        if: ${{ github.repository == 'dwhswenson/plugcli'
+                && github.event != 'schedule' }}
+        uses: codecov/codecov-action@v2
+        with:
+          file: coverage.xml
+          fail_ci_if_error: True
+          verbose: True
+
