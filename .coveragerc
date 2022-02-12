@@ -1,0 +1,11 @@
+[report]
+omit = 
+    */setup.py
+    */version.py
+    */_installed_version.py
+exclude_lines = 
+    pragma: no cover
+    -no-cov-
+    def __repr__
+    raise NotImplementedError
+    if __name__ == "__main__":

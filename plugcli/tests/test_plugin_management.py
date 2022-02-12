@@ -21,7 +21,7 @@ class PluginLoaderTest(object):
     @pytest.mark.parametrize('command', ['exampleA', 'exampleB'])
     def test_find_candidates(self, command):
         candidates  = self.loader._find_candidates()
-        str_candidates = str([c for c in candidates])
+        str_candidates = [str(c) for c in candidates]
         assert str(self._make_candidate(command)) in str_candidates
 
     @pytest.mark.parametrize('command', ['exampleA', 'exampleB'])
