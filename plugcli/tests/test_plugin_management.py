@@ -43,14 +43,19 @@ class PluginLoaderTest(object):
         assert plugin.section == self.expected_section[command]
         assert plugin.plugin_type == self.plugin_type
 
+    def test_bad_namespace(self):
+        loader = self.LoaderClass("nonexistent_foo", CommandPlugin)
+        assert loader._find_candidates() == []
+
 
 class TestFilePluginLoader(PluginLoaderTest):
+    LoaderClass = FilePluginLoader
     def setup(self):
         super().setup()
         # use our own commands dir as a file-based plugin
         parent = pathlib.Path(__file__).resolve().parent
         self.commands_dir = parent / "plugin_examples"
-        self.loader = FilePluginLoader(self.commands_dir, CommandPlugin)
+        self.loader = self.LoaderClass(self.commands_dir, CommandPlugin)
         self.plugin_type = 'file'
 
     def _make_candidate(self, command):
@@ -58,10 +63,11 @@ class TestFilePluginLoader(PluginLoaderTest):
 
 
 class TestNamespacePluginLoader(PluginLoaderTest):
+    LoaderClass = NamespacePluginLoader
     def setup(self):
         super().setup()
         self.namespace = "plugcli.tests.plugin_examples"
-        self.loader = NamespacePluginLoader(self.namespace, CommandPlugin)
+        self.loader = self.LoaderClass(self.namespace, CommandPlugin)
         self.plugin_type = 'namespace'
 
     def _make_candidate(self, command):

@@ -96,3 +96,15 @@ class TestCLI(object):
         assert formatter.contents['Simulation Commands'] == [foo_row]
         assert formatter.contents['Miscellaneous Commands'] == [foobar_row]
         assert len(formatter.contents) == 2
+
+
+def test_abstract_no_command_section():
+    # If COMMAND_SECTIONS is not defined, format_commands raises
+    # NotImplementedError
+    class MyCLI(CLI):
+        def get_installed_plugins(self):
+            return []
+
+    cli = MyCLI()
+    with pytest.raises(NotImplementedError):
+        cli.format_commands(ctx=None, formatter=None)

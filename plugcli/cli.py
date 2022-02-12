@@ -70,6 +70,8 @@ class CLI(click.MultiCommand):
             for cmd in cmds:
                 command = self.get_command(ctx, cmd)
                 if command is None:
+                    # TODO: there is test code that claims to cover this,
+                    # but it isn't getting covered; investigate why
                     continue
                 rows.append((cmd, command.short_help or ''))
 

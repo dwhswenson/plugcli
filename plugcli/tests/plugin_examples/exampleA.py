@@ -2,7 +2,7 @@ import click
 import plugcli
 
 @click.command("exampleA")
-def exampleA():
+def exampleA():  # -no-cov-
     pass
 
 PLUGIN = plugcli.plugin_management.CommandPlugin(
