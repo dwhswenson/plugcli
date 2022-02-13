@@ -1,0 +1,14 @@
+project:
+  repo_owner: dwhswenson
+  repo_name: plugcli
+  project_name: plugcli
+
+repo:
+  release-branches:
+    - stable
+  release-tag: "v{BASE_VERSION}"
+
+release-check:
+  versions:
+    - setup-cfg
+    #- getattr: plugcli.version.version
