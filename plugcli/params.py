@@ -42,7 +42,9 @@ class AbstractParameter:
             the click decorator to use in a command
         """
         # kwargs given here override those given on initialization
-        decorator_kwargs = dict(**self.kwargs, **kwargs)
+
+        decorator_kwargs = self.kwargs.copy()
+        decorator_kwargs.update(kwargs)
         dec = self.__class__.decorator(*self.args, **decorator_kwargs)
         return dec
 
@@ -107,4 +109,6 @@ class MultiStrategyGetter:
             if found is not NOT_PARSED:
                 return found
 
-        raise click.BadInput(error_message.format(user_input=user_input))
+        raise click.BadParameter(
+            self.error_message.format(user_input=user_input)
+        )
