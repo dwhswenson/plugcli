@@ -12,3 +12,7 @@ release-check:
   versions:
     - setup-cfg
     #- getattr: plugcli.version.version
+
+env:
+  package-import-name: "plugcli"
+  dry: ""
