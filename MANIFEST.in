@@ -1,0 +1,3 @@
+include LICENSE
+include plugcli/tests/plugin_examples/*py
+
