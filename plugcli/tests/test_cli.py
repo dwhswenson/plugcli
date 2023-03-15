@@ -37,9 +37,18 @@ class FakeCLI(CLI):
         )
         foobar_plugin.attach_metadata(location='foo_bar.py',
                                       plugin_type='file')
+
+        underscored_plugin = CommandPlugin(
+            command=make_mock("baz_qux", helpless=True,
+                              return_val="baz_qux"),
+            section="Miscellaneous",
+            requires_lib=(1, 0, 0),
+            requires_cli=(2, 0, 0),
+        )
         self.plugin_dict = {
             'foo': foo_plugin,
             'foo-bar': foobar_plugin,
+            'baz-qux': underscored_plugin,
         }
         return [foo_plugin, foobar_plugin]
 
@@ -59,20 +68,26 @@ class TestCLI(object):
     def test_plugins(self):
         assert self.cli.plugins == self.plugins
         assert self.cli._sections['Simulation'] == ['foo']
-        assert self.cli._sections['Miscellaneous'] == ['foo-bar']
+        assert self.cli._sections['Miscellaneous'] == ['foo-bar', 'baz-qux']
 
     @pytest.mark.parametrize('name', ['foo', 'foo-bar'])
     def test_plugin_for_command(self, name):
         assert self.cli.plugin_for_command(name) == self.plugin_dict[name]
 
     def test_list_commands(self):
-        assert self.cli.list_commands(ctx=None) == ['foo', 'foo-bar']
+        expected = list(self.plugin_dict)
+        assert self.cli.list_commands(ctx=None) == expected
 
-    @pytest.mark.parametrize('command', ['foo-bar', 'foo_bar'])
-    def test_get_command(self, command):
+    @pytest.mark.parametrize('command, output', [
+        ('foo-bar', 'foobar'),
+        ('foo_bar', 'foobar'),
+        ('baz-qux', 'baz_qux'),
+        ('baz_qux', 'baz_qux'),
+    ])
+    def test_get_command(self, command, output):
         # this tests that renamings work
         cmd = self.cli.get_command(ctx=None, name=command)
-        assert cmd() == 'foobar'
+        assert cmd() == output
 
     def test_format_commands(self):
         class MockFormatter(object):
@@ -93,8 +108,10 @@ class TestCLI(object):
         self.cli.format_commands(ctx=None, formatter=formatter)
         foo_row = ('foo', 'foo help')
         foobar_row = ('foo-bar', '')
+        bazqux_row = ('baz-qux', '')
         assert formatter.contents['Simulation Commands'] == [foo_row]
-        assert formatter.contents['Miscellaneous Commands'] == [foobar_row]
+        assert formatter.contents['Miscellaneous Commands'] == [foobar_row,
+                                                               bazqux_row]
         assert len(formatter.contents) == 2
 
 

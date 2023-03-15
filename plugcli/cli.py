@@ -44,8 +44,10 @@ class CLI(click.MultiCommand):
 
     def _register_plugin(self, plugin):
         self.plugins.append(plugin)
-        self._get_command[plugin.name] = plugin.command
-        self._sections[plugin.section].append(plugin.name)
+        # normalize underscores to hyphens
+        name = plugin.name.replace('_', '-')
+        self._get_command[name] = plugin.command
+        self._sections[plugin.section].append(name)
 
     def _deregister_plugin(self, plugin):
         # mainly used in testing
