@@ -24,6 +24,7 @@ jobs:
     strategy:
       matrix:
         CONDA_PY:
+          - "3.11"
           - "3.10"
           - "3.9"
           - "3.8"
@@ -54,9 +55,9 @@ jobs:
       - name: "CodeCov"
         if: ${{ github.repository == 'dwhswenson/plugcli'
                 && github.event != 'schedule' }}
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           file: coverage.xml
           fail_ci_if_error: True
           verbose: True
-
+          token: ${{ secrets.CODECOV_TOKEN }}
