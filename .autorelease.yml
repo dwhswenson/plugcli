@@ -18,7 +18,7 @@ notes:
     - label: misc PR
       heading: Miscellaneous improvements
 
-  standard-contributors:
+  standard_contributors:
     - dwhswenson
 
 release-check:
