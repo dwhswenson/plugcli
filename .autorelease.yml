@@ -8,6 +8,19 @@ repo:
     - stable
   release-tag: "v{BASE_VERSION}"
 
+# writing release notes
+notes:
+  labels:
+    - label: enhancement
+      heading: New features
+    - label: bugfix
+      heading: Bugs fixed
+    - label: misc PR
+      heading: Miscellaneous improvements
+
+  standard-contributors:
+    - dwhswenson
+
 release-check:
   versions:
     - setup-cfg
