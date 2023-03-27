@@ -54,7 +54,7 @@ jobs:
           pytest -v --cov=plugcli --cov-report=xml
       - name: "CodeCov"
         if: ${{ github.repository == 'dwhswenson/plugcli'
-                && github.event != 'schedule' }}
+                && github.event_name != 'schedule' }}
         uses: codecov/codecov-action@v3
         with:
           file: coverage.xml
