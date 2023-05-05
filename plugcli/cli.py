@@ -42,6 +42,9 @@ class CLI(click.MultiCommand):
             raise NotImplementedError("Subclasses must include class "
                                       "variable 'COMMAND_SECTIONS'")
 
+    def _section_label(self, section_name):
+        return section_name + " Commands"
+
     def _register_plugin(self, plugin):
         self.plugins.append(plugin)
         # normalize underscores to hyphens
@@ -78,5 +81,5 @@ class CLI(click.MultiCommand):
                 rows.append((cmd, command.short_help or ''))
 
             if rows:
-                with formatter.section(sec + " Commands"):
+                with formatter.section(self._section_label(sec)):
                     formatter.write_dl(rows)
