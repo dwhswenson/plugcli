@@ -68,11 +68,20 @@ class CLI(click.MultiCommand):
         name = name.replace('_', '-')  # allow - or _ from user
         return self._get_command.get(name)
 
+    def _section_sort_commands(self, section, commands):
+        """
+        Parameters
+        ----------
+        section : str
+        commands : Iterable[str]
+        """
+        yield from commands
+
     def format_commands(self, ctx, formatter):
         for sec in self._command_sections:
             cmds = self._sections.get(sec, [])
             rows = []
-            for cmd in cmds:
+            for cmd in self._section_sort_commands(sec, cmds):
                 command = self.get_command(ctx, cmd)
                 if command is None:
                     # TODO: there is test code that claims to cover this,
