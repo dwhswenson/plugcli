@@ -154,7 +154,7 @@ class FilePluginLoader(CLIPluginLoader):
     @staticmethod
     def _make_nsdict(candidate):
         ns = {}
-        with open(candidate) as f:
+        with open(candidate, encoding='utf-8') as f:
             code = compile(f.read(), candidate, 'exec')
             eval(code, ns, ns)
         return ns
