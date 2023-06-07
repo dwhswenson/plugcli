@@ -52,9 +52,27 @@ class FakeCLI(CLI):
         }
         return [foo_plugin, foobar_plugin]
 
+class MockFormatter(object):
+    def __init__(self):
+        self.title = None
+        self.contents = {}
+
+    def section(self, title):
+        self.title = title
+        return MagicMock()
+
+    def write_dl(self, rows):
+        self.contents[self.title] = rows
+
+
+class FakeCLIResorted(FakeCLI):
+    def _section_sort_commands(self, section, commands):
+        # default is foo-bar then baz-qux, this should flip the order
+        yield from sorted(commands)
+
 
 class TestCLI(object):
-    def setup(self):
+    def setup_method(self):
         self.cli = FakeCLI()
         self.plugin_dict = self.cli.plugin_dict
         self.plugins = list(self.cli.plugin_dict.values())
@@ -90,18 +108,6 @@ class TestCLI(object):
         assert cmd() == output
 
     def test_format_commands(self):
-        class MockFormatter(object):
-            def __init__(self):
-                self.title = None
-                self.contents = {}
-
-            def section(self, title):
-                self.title = title
-                return MagicMock()
-
-            def write_dl(self, rows):
-                self.contents[self.title] = rows
-
         formatter = MockFormatter()
         # add a non-existent command; tests when get_command is None
         self.cli._sections['Workflow'] = ['baz']
@@ -111,8 +117,30 @@ class TestCLI(object):
         bazqux_row = ('baz-qux', '')
         assert formatter.contents['Simulation Commands'] == [foo_row]
         assert formatter.contents['Miscellaneous Commands'] == [foobar_row,
-                                                               bazqux_row]
+                                                                bazqux_row]
         assert len(formatter.contents) == 2
+
+    def test_section_sort_commands(self):
+        cli = FakeCLIResorted()
+        # deal with the fact that baz-qux isn't registered
+        plugins = list(cli.plugin_dict.values())
+        assert len(plugins) == 3
+        for plugin in cli.plugins[:]:
+            cli._deregister_plugin(plugin)
+
+        for plugin in plugins:
+            cli._register_plugin(plugin)
+
+        assert len(cli.plugins) == 3
+
+        formatter = MockFormatter()
+        cli.format_commands(ctx=None, formatter=formatter)
+        foo_row = ('foo', 'foo help')
+        foobar_row = ('foo-bar', '')
+        bazqux_row = ('baz-qux', '')
+        assert formatter.contents['Simulation Commands'] == [foo_row]
+        assert formatter.contents['Miscellaneous Commands'] == [bazqux_row,
+                                                                foobar_row]
 
 
 def test_abstract_no_command_section():
