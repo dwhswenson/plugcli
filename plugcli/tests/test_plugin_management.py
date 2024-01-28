@@ -11,7 +11,7 @@ import click
 
 
 class PluginLoaderTest(object):
-    def setup(self):
+    def setup_method(self):
         self.expected_section = {'exampleA': "Simulation",
                                  'exampleB': "Miscellaneous"}
 
@@ -50,8 +50,8 @@ class PluginLoaderTest(object):
 
 class TestFilePluginLoader(PluginLoaderTest):
     LoaderClass = FilePluginLoader
-    def setup(self):
-        super().setup()
+    def setup_method(self):
+        super().setup_method()
         # use our own commands dir as a file-based plugin
         parent = pathlib.Path(__file__).resolve().parent
         self.commands_dir = parent / "plugin_examples"
@@ -64,8 +64,8 @@ class TestFilePluginLoader(PluginLoaderTest):
 
 class TestNamespacePluginLoader(PluginLoaderTest):
     LoaderClass = NamespacePluginLoader
-    def setup(self):
-        super().setup()
+    def setup_method(self):
+        super().setup_method()
         self.namespace = "plugcli.tests.plugin_examples"
         self.loader = self.LoaderClass(self.namespace, CommandPlugin)
         self.plugin_type = 'namespace'
