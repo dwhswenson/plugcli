@@ -5,7 +5,7 @@ from plugcli.params import *
 
 class ParameterTest:
     plugcli_class = None
-    def setup(self):
+    def setup_method(self):
         if self.plugcli_class is Option:
             self.name = "--foo"
         elif self.plugcli_class is Argument:
@@ -62,7 +62,7 @@ class TestArgument(ParameterTest):
 
 
 class TestMultiStrategyGetter:
-    def setup(self):
+    def setup_method(self):
         self.pass_strategy = lambda user_input, context: str(user_input)
         self.fail_strategy = lambda user_input, context: NOT_PARSED
         self.error_message = "bad input '{user_input}'"
