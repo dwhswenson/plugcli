@@ -2,7 +2,7 @@
 
 This contains the "main" class/functions for running the OPS CLI.
 """
-# builds off the example of MultiCommand in click's docs
+# builds off the example of Group in click's docs
 import collections
 import os
 import pathlib
@@ -14,7 +14,7 @@ import click
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-class CLI(click.MultiCommand):
+class CLI(click.Group):
     """Main class for the command line interface
 
     Most of the logic here is about handling the plugin infrastructure.
